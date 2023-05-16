@@ -16,15 +16,21 @@ func ShortenUrl(c *gin.Context) {
 	// Get Request input
 	var input ShortenedUrlInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "Bad request", "error": err.Error()})
 		return
 	}
 
 	err := models.CreateShortenedUrl(input.Url)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Internal server error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Internal server error", "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"msg": "Success"})
+	result, err := models.GetShortenedUrl(input.Url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Internal server error", "error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"msg": "Success", "result": result})
 }

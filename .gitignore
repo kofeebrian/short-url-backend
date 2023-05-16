@@ -4,3 +4,5 @@ data/
 main
 *.local*
 *.dev*
+
+.env

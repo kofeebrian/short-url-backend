@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
-	"log"
 	"time"
 
 	"github.com/kofeebrian/short-url-server/db"
@@ -35,13 +33,12 @@ func CreateShortenedUrl(url string) error {
 
 	// Get urls collections
 	collection = client.Database("short-url").Collection("urls")
-	log.Println(collection)
 
 	var shortenedUrl ShortenedUrl
 	// Else, create a new one
 	shortenedUrl = ShortenedUrl{
 		Url:          url,
-		ShortenedUrl: fmt.Sprintf("http://localhost:8080/%s", hash[:7]), // Just do a simple slice for now
+		ShortenedUrl: "http://localhost:8080/" + hash[:7], // Just do a simple slice for now
 		CreateAt:     time.Now(),
 		UpdateAt:     time.Now(),
 	}
@@ -53,4 +50,12 @@ func CreateShortenedUrl(url string) error {
 	_, err := collection.UpdateOne(context.TODO(), filter, update, opts)
 
 	return err
+}
+
+func GetShortenedUrl(url string) (ShortenedUrl, error) {
+	var shortenedUrl ShortenedUrl
+
+	err := collection.FindOne(context.TODO(), bson.M{"url": url}).Decode(&shortenedUrl)
+
+	return shortenedUrl, err
 }

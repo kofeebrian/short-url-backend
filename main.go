@@ -1,10 +1,19 @@
 package main
 
-import "github.com/kofeebrian/short-url-server/routes"
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+	"github.com/kofeebrian/short-url-server/routes"
+)
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	r := routes.SetupRouters()
 
-	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
