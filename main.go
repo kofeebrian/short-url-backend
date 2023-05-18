@@ -11,7 +11,8 @@ func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Printf("Error loading .env file: %v", err)
+		log.Printf("Will use environment variables")
 	}
 
 	r := routes.SetupRouters()
