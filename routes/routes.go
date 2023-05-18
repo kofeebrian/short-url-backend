@@ -8,8 +8,10 @@ import (
 
 func SetupRouters() *gin.Engine {
 	r := gin.Default()
+	r.Use(middlewares.CORSMiddleware())
 
 	r.GET("/token", controllers.GenerateToken)
+	r.GET("/:shortUrl", controllers.RedirectUrl)
 
 	protected := r.Group("/", middlewares.AuthMiddleware)
 	{

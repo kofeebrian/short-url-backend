@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	gourl "net/url"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kofeebrian/short-url-server/models"
@@ -32,5 +35,25 @@ func ShortenUrl(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"msg": "Success", "result": result})
+	c.JSON(http.StatusCreated, gin.H{"msg": "Success", "result_url": result.ShortenedUrl})
+}
+
+func RedirectUrl(c *gin.Context) {
+	shortUrl := c.Param("shortUrl")
+
+	shortUrl, err := gourl.JoinPath(os.Getenv("SERVER_NAME"), shortUrl)
+	log.Printf("shortUrl: %s", shortUrl)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "Bad request", "error": err.Error()})
+		return
+	}
+
+	result, err := models.GetOriginalUrl(shortUrl)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"msg": "Url not found", "error": err.Error()})
+		return
+	}
+
+	c.Redirect(http.StatusMovedPermanently, result.LongUrl)
 }

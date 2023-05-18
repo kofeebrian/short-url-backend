@@ -23,5 +23,7 @@ func GenerateToken(c *gin.Context) {
 		return
 	}
 
+	c.SetCookie("token", ss, 3600, "/", "localhost", false, true)
+
 	c.JSON(http.StatusOK, gin.H{"token": ss})
 }

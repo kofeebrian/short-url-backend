@@ -11,13 +11,13 @@ import (
 var client *mongo.Client
 
 func DBConnect() *mongo.Client {
-	opts := options.Client().ApplyURI("mongodb://mongo:27017")
-	client, err := mongo.Connect(context.TODO(), opts)
+	opts := options.Client().ApplyURI("mongodb://db:27017")
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
 		log.Fatal("Connection Failed to Database: ", err)
 	}
 
-	err = client.Ping(context.TODO(), nil)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal("Connection Failed to Database: ", err)
 	}
